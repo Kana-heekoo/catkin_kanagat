@@ -5,12 +5,8 @@
 float x;
 
 void jointCallback(const std_msgs::Float64 msg){
-	if(msg.data < x) {
-		ROS_INFO("You entered lower data");
-	} else {
-		x = msg.data;
-		ROS_INFO("X: %f", x);
-	}
+	x=msg.data;
+	ROS_INFO("x: %f", x);
 }
 
 int main(int argc, char **argv){
@@ -18,16 +14,23 @@ int main(int argc, char **argv){
 	x = 0;
 	ros::NodeHandle nh;
 	ros::Publisher pub = nh.advertise<std_msgs::Float64>("/robot/joint5_position_controller/command", 10);
-
 	ros::Subscriber sub = nh.subscribe("move_joint", 1000, jointCallback);
 
 	ros::Rate loop_rate(1);
+	ros::Time startTime = ros::Time::now();
+	float i=0.0;
+	float s=sin(i);
 
 	while(ros::ok()) {
+		if(s>0){
+		s=1;}
+		else{
+		s=0;}
+		i+=1;
 		std_msgs::Float64 msg_to_send;
-		msg_to_send.data = x;
+		msg_to_send.data = s;
 		pub.publish(msg_to_send);
-		ROS_INFO("moving joint 5");
+		ROS_INFO("moving the joint");
 		ros::spinOnce();
 		loop_rate.sleep();
 	}
